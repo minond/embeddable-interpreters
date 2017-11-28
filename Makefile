@@ -3,3 +3,6 @@ TFLAGS = --outDir dist --lib dom,es2017 --module commonjs --strict --noImplicitA
 
 build:
 	$(TSC) type/*/*.d.ts *.ts $(TFLAGS)
+
+test: build
+	node test/*_test.ts
