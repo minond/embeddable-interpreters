@@ -16,6 +16,24 @@
 
 'use strict'
 
+type State = {
+  pointer: number
+  idx: number
+  memory: number[]
+}
+
+type Hooks = {
+  read: (string) => void
+  write: (string) => void
+  done: () => void
+
+  tick: (
+    internalTick: () => void,
+    internalUpdate: (state: State) => void,
+    internalState: State & { steps: number }
+  ) => void
+}
+
 const inBrowser = typeof window !== 'undefined'
 const inputPrompt = 'input: '
 
@@ -58,7 +76,7 @@ const pass = (x) =>
   x
 
 // ## the interpreter
-const exec = (prog, userHooks?) => {
+const exec = (prog: string, userHooks?: Hooks) => {
   // first, split the program into an array of characters so we can take action
   // upon each of them one by one. that is stores in `cmds`. then store the
   // number of "commands" so that we know when to stop and not have to check
@@ -72,15 +90,15 @@ const exec = (prog, userHooks?) => {
   // local variable, so there is no need to pass it around to functions that
   // are in the state of the interpreter
   var steps = 0
-  var cmd
+  var cmd: string
 
   // the rest of the state variables: `jumps` is a stack of loop starting
   // indexes. see `[` and `]` operators.  `memory` is where we store the memory
   // cells of our program.  `pointer` this is where we are pointing to in
   // memory. always starts at zero.  finally, `ids` tracks the index of where
   // we are in the program
-  var jumps = []
-  var memory = []
+  var jumps: number[] = []
+  var memory: number[] = []
   var pointer = 0
   var idx = 0
 
@@ -136,7 +154,7 @@ const exec = (prog, userHooks?) => {
   // interpreter. they allow for custom io functions as well as ways to move on
   // to the next step and update state
 
-  const internalUpdate = (state) => {
+  const internalUpdate = (state: State) => {
     memory = isset(state.memory) ? state.memory : memory
     pointer = isset(state.pointer) ? state.pointer : pointer
     idx = isset(state.idx) ? state.idx : idx
@@ -167,7 +185,7 @@ const exec = (prog, userHooks?) => {
       steps,
       memory: memory.slice(0) })
 
-  const hooks = Object.assign({ read, write, tick: call, done: pass },
+  const hooks: Hooks = Object.assign({ read, write, tick: call, done: pass },
     userHooks)
 
   // ### operators
