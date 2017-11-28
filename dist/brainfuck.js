@@ -1,16 +1,8 @@
+"use strict";
 // > Brainfuck is an esoteric programming language created in 1993 by Urban
 // Müller, and notable for its extreme minimalism. The language consists of
 // only eight simple commands and an instruction pointer. While it is fully
 // Turing-complete, it is not intended for practical use...
-// - https://en.wikipedia.org/wiki/Brainfuck
-// ## setup
-// some helper functions. need to know if we should use browser or node apis
-// for i/o. the following functions are read and write implementations for
-// specific environments. they include: a write function for node; a write
-// function for browsers; a read function for node; a read function for
-// browsers; a generic read function. use this in the interpreter; and a
-// generic write function. use this in the interpreter.
-'use strict';
 var inBrowser = typeof window !== 'undefined';
 var inputPrompt = 'input: ';
 var nodeWrite = function (str) {
@@ -223,3 +215,15 @@ else if (inBrowser) {
 else {
     module.exports = { exec: exec, brainfuck: brainfuck };
 }
+// ```javascript
+// // in js land
+// brainfuck`-[------->+<]
+//           >-.-[->+++++<]
+//           >++.+++++++..+++.[--->+<]
+//           >-----.--[->++++<]
+//           >-.--------.+++.------.--------.`
+// ```
+// ```bash
+// # in your terminal
+// $ node brainfuck.js src/bf/squares.bf
+// ```

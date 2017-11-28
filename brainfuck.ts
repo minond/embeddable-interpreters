@@ -14,8 +14,6 @@
 // browsers; a generic read function. use this in the interpreter; and a
 // generic write function. use this in the interpreter.
 
-'use strict'
-
 type State = {
   pointer: number
   idx: number
@@ -23,8 +21,8 @@ type State = {
 }
 
 type Hooks = {
-  read: (string) => void
-  write: (string) => void
+  read: (str: StringInput) => void
+  write: (str: string) => void
   done: () => void
 
   tick: (
@@ -34,16 +32,18 @@ type Hooks = {
   ) => void
 }
 
+type StringInput = (str: string) => void
+
 const inBrowser = typeof window !== 'undefined'
 const inputPrompt = 'input: '
 
-const nodeWrite = (str) =>
+const nodeWrite = (str: string) =>
   process.stdout.write(str)
 
-const browserWrite = (str) =>
+const browserWrite = (str: string) =>
   console.log(str)
 
-const nodeRead = (cb) => {
+const nodeRead = (cb: StringInput) => {
   const readline = require('readline')
 
   const rl = readline.createInterface({
@@ -51,28 +51,28 @@ const nodeRead = (cb) => {
     output: process.stdout
   })
 
-  rl.question(inputPrompt, (input) => {
+  rl.question(inputPrompt, (input: string) => {
     rl.close()
     cb(input)
   })
 }
 
-const browserRead = (cb) =>
+const browserRead = (cb: StringInput) =>
   cb(window.prompt(inputPrompt) || String.fromCharCode(0))
 
-const read = (cb) =>
+const read = (cb: StringInput) =>
   inBrowser ? browserRead(cb) : nodeRead(cb)
 
-const write = (str) =>
+const write = (str: string) =>
   inBrowser ? browserWrite(str) : nodeWrite(str)
 
-const isset = (val) =>
+const isset = (val: any) =>
   val !== null && val !== undefined
 
-const call = (fn) =>
+const call = (fn: () => void) =>
   fn()
 
-const pass = (x) =>
+const pass = (x: any) =>
   x
 
 // ## the interpreter
@@ -109,22 +109,22 @@ const exec = (prog: string, userHooks?: Hooks) => {
   const curr = () =>
     memory[pointer] || 0
 
-  const save = (val) => {
+  const save = (val: number) => {
     memory[pointer] = val
   }
 
   // do you want to see the state after every command?
-  const canDebug = (cmd) =>
+  const canDebug = (cmd: string) =>
     !!process.env.DEBUG && '-+<>[],.'.indexOf(cmd) !== -1
 
-  const dump = (cmd) =>
+  const dump = (cmd: string) =>
     console.log('[%s:%s]\t\tcmd: %s\t\tcurr: %s[%s]\t\tmem: %s', steps, idx, cmd,
       pointer, curr(), JSON.stringify(memory))
 
   // finds the matching closing bracket of the start of a loop. see `[` and `]`
   // operators. increment for every `[` and decrement for every `]`. we'll know
   // we're at our closing bracket when we get to zero
-  const findEnd = (idx) => {
+  const findEnd = (idx: number) => {
     var stack = 1
 
     while (cmds[idx]) {
@@ -199,7 +199,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
   // | `,`  | accept one byte of input, storing its value in the byte at the data pointer.                                                                                                        |
   // | `[`  | if the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching `]` command. |
   // | `]`  | if the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching `[` command. |
-  const ops = {
+  const ops: { [index: string]: () => void } = {
     '+': () => save((curr() === 255 ? 0 : curr() + 1)),
     '-': () => save((curr() || 256) - 1),
     '<': () => --pointer,
@@ -236,7 +236,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
       // since read functions may not always be blocking, we handle ',' as a
       // special operator, separately from the flow of the rest of the
       // operators
-      hooks.read((input) => {
+      hooks.read((input: string) => {
         save(input.charCodeAt(0))
         tick()
       })
@@ -254,7 +254,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
 // other checks if we are being ran as a stand-alone module and if we have an
 // argument being passed in - if this is the case run that brainfuck program
 // right away
-const brainfuck = ([prog]) =>
+const brainfuck = ([prog]: string[]) =>
   exec(prog)
 
 if (!module.parent && process.argv[2]) {
