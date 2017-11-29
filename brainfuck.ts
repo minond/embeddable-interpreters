@@ -5,14 +5,14 @@
 
 // - https://en.wikipedia.org/wiki/Brainfuck
 
-// ## setup
+// ## Setup
 
-// some helper functions. need to know if we should use browser or node apis
-// for i/o. the following functions are read and write implementations for
-// specific environments. they include: a write function for node; a write
-// function for browsers; a read function for node; a read function for
-// browsers; a generic read function. use this in the interpreter; and a
-// generic write function. use this in the interpreter.
+// Helper functions. We need to know if we should use browser or node apis for
+// i/o. The following functions are read and write implementations for specific
+// environments. They include: a write function for node; a write function for
+// browsers; a read function for node; a read function for browsers; a generic
+// read function. Use this in the interpreter; and a generic write function.
+// Use this in the interpreter.
 
 type State = {
   pointer: number
@@ -75,36 +75,36 @@ const call = (fn: () => void) =>
 const pass = (x: any) =>
   x
 
-// ## the interpreter
-const exec = (prog: string, userHooks?: Hooks) => {
-  // first, split the program into an array of characters so we can take action
-  // upon each of them one by one. that is stores in `cmds`. then store the
+// ## The interpreter
+export const exec = (prog: string, userHooks?: Hooks) => {
+  // First, split the program into an array of characters so we can take action
+  // upon each of them one by one. That is stores in `cmds`. Then store the
   // number of "commands" so that we know when to stop and not have to check
-  // the `.length` property over and over again. that is stores in `len`
+  // the `.length` property over and over again. That is stores in `len`
   const cmds = prog.split('')
   const len = cmds.length
 
-  // now to the state variables. first, two less important ones: `steps` is
+  // Now to the state variables. First, two less important ones: `steps` is
   // used to track how many times the `dump` function has been called and `cmd`
-  // is the local variable of the current command we are processing. this is a
+  // is the local variable of the current command we are processing. This is a
   // local variable, so there is no need to pass it around to functions that
   // are in the state of the interpreter
   var steps = 0
   var cmd: string
 
-  // the rest of the state variables: `jumps` is a stack of loop starting
-  // indexes. see `[` and `]` operators.  `memory` is where we store the memory
+  // The rest of the state variables: `jumps` is a stack of loop starting
+  // indexes. See `[` and `]` operators.  `memory` is where we store the memory
   // cells of our program.  `pointer` this is where we are pointing to in
-  // memory. always starts at zero.  finally, `ids` tracks the index of where
+  // memory. Always starts at zero.  Finally, `ids` tracks the index of where
   // we are in the program
   var jumps: number[] = []
   var memory: number[] = []
   var pointer = 0
   var idx = 0
 
-  // some helper small functions. `curr` is used for getting the current value
+  // Some helper small functions. `curr` is used for getting the current value
   // in the memory cell we are pointing to. `save` is for setting the value of
-  // the memory cell we are pointing to.  and `canDebug` and `dump` are for
+  // the memory cell we are pointing to.  And `canDebug` and `dump` are for
   // debugging purposes.
   const curr = () =>
     memory[pointer] || 0
@@ -113,7 +113,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
     memory[pointer] = val
   }
 
-  // do you want to see the state after every command?
+  // Do you want to see the state after every command?
   const canDebug = (cmd: string) =>
     !!process.env.DEBUG && '-+<>[],.'.indexOf(cmd) !== -1
 
@@ -121,7 +121,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
     console.log('[%s:%s]\t\tcmd: %s\t\tcurr: %s[%s]\t\tmem: %s', steps, idx, cmd,
       pointer, curr(), JSON.stringify(memory))
 
-  // finds the matching closing bracket of the start of a loop. see `[` and `]`
+  // Finds the matching closing bracket of the start of a loop. see `[` and `]`
   // operators. increment for every `[` and decrement for every `]`. we'll know
   // we're at our closing bracket when we get to zero
   const findEnd = (idx: number) => {
@@ -148,10 +148,10 @@ const exec = (prog: string, userHooks?: Hooks) => {
     return idx
   }
 
-  // ### hooks
+  // ### Hooks
 
-  // hooks allow other programs to interact with the internals of the
-  // interpreter. they allow for custom io functions as well as ways to move on
+  // Hooks allow other programs to interact with the internals of the
+  // interpreter. They allow for custom io functions as well as ways to move on
   // to the next step and update state
 
   const internalUpdate = (state: State) => {
@@ -160,8 +160,8 @@ const exec = (prog: string, userHooks?: Hooks) => {
     idx = isset(state.idx) ? state.idx : idx
   }
 
-  // moves on to the next command. checks that we still have commands left to
-  // read and also show debugging information. in a `process.nextTick` (or one
+  // Moves on to the next command. Checks that we still have commands left to
+  // read and also show debugging information. In a `process.nextTick` (or one
   // of its siblings) to prevent call stack overflows
   const internalTick = () => {
     if (canDebug(cmd)) {
@@ -188,7 +188,7 @@ const exec = (prog: string, userHooks?: Hooks) => {
   const hooks: Hooks = Object.assign({ read, write, tick: call, done: pass },
     userHooks)
 
-  // ### operators
+  // ### Operators
   // | tok  | description                                                                                                                                                                         |
   // |:----:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
   // | `>`  | increment the data pointer (to point to the next cell to the right).                                                                                                                |
@@ -223,17 +223,17 @@ const exec = (prog: string, userHooks?: Hooks) => {
     }
   }
 
-  // this is what executes every command
+  // This is what executes every command
   const run = () => {
     cmd = cmds[idx]
 
     if (cmd in ops) {
-      // is the current command a standard operator? if so just run it.
-      // standard operators update the state themselvels
+      // Is the current command a standard operator? if so just run it.
+      // Standard operators update the state themselvels
       ops[cmd]()
       tick()
     } else if (cmd === ',') {
-      // since read functions may not always be blocking, we handle ',' as a
+      // Since read functions may not always be blocking, we handle ',' as a
       // special operator, separately from the flow of the rest of the
       // operators
       hooks.read((input: string) => {
@@ -241,39 +241,11 @@ const exec = (prog: string, userHooks?: Hooks) => {
         tick()
       })
     } else {
-      // not a brainfuck command - ignore it
+      // Not a brainfuck command - ignore it
       tick()
     }
   }
 
-  // run this fucker
+  // Run this fucker
   run()
 }
-
-// the next two blocks of code declare a js template literal function and the
-// other checks if we are being ran as a stand-alone module and if we have an
-// argument being passed in - if this is the case run that brainfuck program
-// right away
-const brainfuck = ([prog]: string[]) =>
-  exec(prog)
-
-if (!module.parent && process.argv[2]) {
-  exec(require('fs').readFileSync(process.argv[2]).toString())
-} else if (inBrowser) {
-  module.exports = exec
-} else {
-  module.exports = { exec, brainfuck }
-}
-// ```javascript
-// // in js land
-// brainfuck`-[------->+<]
-//           >-.-[->+++++<]
-//           >++.+++++++..+++.[--->+<]
-//           >-----.--[->++++<]
-//           >-.--------.+++.------.--------.`
-// ```
-
-// ```bash
-// # in your terminal
-// $ node brainfuck.js src/bf/squares.bf
-// ```
