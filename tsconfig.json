@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "lib": ["dom", "es2017"],
+        "module": "umd",
+        "strict": true,
+        "noImplicitAny": true,
+        "alwaysStrict": true
+    },
+    "files": [
+      "type/index.d.ts",
+      "type/inspector.d.ts",
+      "brainfuck.ts"
+    ]
+}
