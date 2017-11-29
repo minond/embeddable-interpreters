@@ -4,7 +4,13 @@ Resources for Brainfuck:
   - https://esolangs.org/wiki/Brainfuck
   - https://en.wikipedia.org/wiki/Brainfuck
 
+
 Building and testing:
 
-  make
+  make build test
+
+
+Execute code or start repl:
+
+  ./main brainfuck
   ./main brainfuck test/bf/helloworld.bf
