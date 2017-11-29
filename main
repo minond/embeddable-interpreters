@@ -1,0 +1,30 @@
+#!/usr/local/bin/node
+
+const CMD_MODE = process.argv[2]
+const CMD_FILE = process.argv[3]
+
+const read = require('fs').readFileSync
+const brainfuck = require('./dist/brainfuck').exec
+
+function usage() {
+  console.log('Usage: main [mode] <file>')
+  console.log('')
+  console.log('  - modes: brainfuck')
+}
+
+switch (CMD_MODE) {
+case 'brainfuck':
+  if (CMD_FILE) {
+    brainfuck(read(CMD_FILE).toString())
+  }
+  break
+
+case '-h':
+case '--help':
+  usage()
+  break
+
+default:
+  usage()
+  process.exit(1)
+}
