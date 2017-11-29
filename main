@@ -1,8 +1,6 @@
 #!/usr/local/bin/node
 
-const CMD_MODE = process.argv[2]
-const CMD_FILE = process.argv[3]
-
+const repl = require('repl')
 const read = require('fs').readFileSync
 const brainfuck = require('./dist/brainfuck').exec
 
@@ -12,11 +10,40 @@ function usage() {
   console.log('  - modes: brainfuck')
 }
 
-switch (CMD_MODE) {
-case 'brainfuck':
-  if (CMD_FILE) {
-    brainfuck(read(CMD_FILE).toString())
+function runExec(interpreter, file) {
+  interpreter(read(file).toString())
+}
+
+function runRepl(interpreter) {
+  repl.start({
+    prompt: '> ',
+    eval: function (cmd, ctx, file, cb) {
+      var buff = ''
+
+      interpreter(cmd, {
+        write: function (str) {
+          buff += str
+        },
+
+        done: function () {
+          cb(null, buff)
+        }
+      })
+    }
+  });
+}
+
+function handle(interpreter) {
+  if (process.argv[3]) {
+    runExec(interpreter, process.argv[3])
+  } else {
+    runRepl(interpreter)
   }
+}
+
+switch (process.argv[2]) {
+case 'brainfuck':
+  handle(brainfuck)
   break
 
 case '-h':
