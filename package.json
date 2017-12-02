@@ -1,0 +1,25 @@
+{
+  "name": "embeddable-interpreters",
+  "version": "1.0.0",
+  "description": "Embeddable interpreters. The idea is that you could take one of these interpreters and embed them into web apps. You'll mostly find esoteric programming languages.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minond/embeddable-interpreters.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/minond/embeddable-interpreters/issues"
+  },
+  "homepage": "https://github.com/minond/embeddable-interpreters#readme",
+  "dependencies": {
+    "typescript": "^2.7.0-dev.20171201"
+  }
+}
