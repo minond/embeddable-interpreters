@@ -8,48 +8,20 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
+        define(["require", "exports", "./common"], factory);
     }
 })(function (require, exports) {
     "use strict";
     exports.__esModule = true;
-    var inBrowser = typeof window !== 'undefined';
-    var inputPrompt = 'input: ';
-    var nodeWrite = function (str) {
-        return process.stdout.write(str);
-    };
-    var browserWrite = function (str) {
-        return console.log(str);
-    };
-    var nodeRead = function (cb) {
-        var readline = require('readline');
-        var rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-        rl.question(inputPrompt, function (input) {
-            rl.close();
-            cb(input);
-        });
-    };
-    var browserRead = function (cb) {
-        return cb(window.prompt(inputPrompt) || String.fromCharCode(0));
-    };
-    var read = function (cb) {
-        return inBrowser ? browserRead(cb) : nodeRead(cb);
-    };
-    var write = function (str) {
-        return inBrowser ? browserWrite(str) : nodeWrite(str);
-    };
-    var isset = function (val) {
-        return val !== null && val !== undefined;
-    };
-    var call = function (fn) {
-        return fn();
-    };
-    var pass = function (x) {
-        return x;
-    };
+    // - https://en.wikipedia.org/wiki/Brainfuck
+    // ## Setup
+    // Helper functions. We need to know if we should use browser or node apis for
+    // i/o. The following functions are read and write implementations for specific
+    // environments. They include: a write function for node; a write function for
+    // browsers; a read function for node; a read function for browsers; a generic
+    // read function. Use this in the interpreter; and a generic write function.
+    // Use this in the interpreter.
+    var common_1 = require("./common");
     // ## The interpreter
     exports.exec = function (prog, userHooks) {
         // First, split the program into an array of characters so we can take action
@@ -119,9 +91,9 @@
         // interpreter. They allow for custom io functions as well as ways to move on
         // to the next step and update state
         var internalUpdate = function (state) {
-            memory = isset(state.memory) ? state.memory : memory;
-            pointer = isset(state.pointer) ? state.pointer : pointer;
-            idx = isset(state.idx) ? state.idx : idx;
+            memory = common_1.isset(state.memory) ? state.memory : memory;
+            pointer = common_1.isset(state.pointer) ? state.pointer : pointer;
+            idx = common_1.isset(state.idx) ? state.idx : idx;
         };
         // Moves on to the next command. Checks that we still have commands left to
         // read and also show debugging information. In a `process.nextTick` (or one
@@ -147,7 +119,7 @@
                 memory: memory.slice(0)
             });
         };
-        var hooks = Object.assign({ read: read, write: write, tick: call, done: pass }, userHooks);
+        var hooks = Object.assign({ read: common_1.read, write: common_1.write, tick: common_1.call, done: common_1.pass }, userHooks);
         // ### Operators
         // | tok  | description                                                                                                                                                                         |
         // |:----:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

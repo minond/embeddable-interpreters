@@ -13,6 +13,7 @@
 // browsers; a read function for node; a read function for browsers; a generic
 // read function. Use this in the interpreter; and a generic write function.
 // Use this in the interpreter.
+import { StringInput, read, write, isset, call, pass } from "./common";
 
 type State = {
   pointer: number
@@ -31,49 +32,6 @@ type Hooks = {
     internalState: State & { steps: number }
   ) => void
 }
-
-type StringInput = (str: string) => void
-
-const inBrowser = typeof window !== 'undefined'
-const inputPrompt = 'input: '
-
-const nodeWrite = (str: string) =>
-  process.stdout.write(str)
-
-const browserWrite = (str: string) =>
-  console.log(str)
-
-const nodeRead = (cb: StringInput) => {
-  const readline = require('readline')
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-
-  rl.question(inputPrompt, (input: string) => {
-    rl.close()
-    cb(input)
-  })
-}
-
-const browserRead = (cb: StringInput) =>
-  cb(window.prompt(inputPrompt) || String.fromCharCode(0))
-
-const read = (cb: StringInput) =>
-  inBrowser ? browserRead(cb) : nodeRead(cb)
-
-const write = (str: string) =>
-  inBrowser ? browserWrite(str) : nodeWrite(str)
-
-const isset = (val: any) =>
-  val !== null && val !== undefined
-
-const call = (fn: () => void) =>
-  fn()
-
-const pass = (x: any) =>
-  x
 
 // ## The interpreter
 export const exec = (prog: string, userHooks?: Hooks) => {
