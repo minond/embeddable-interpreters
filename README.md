@@ -2,14 +2,10 @@
 
 Embeddable interpreters. The idea is that you could take one of these
 interpreters and embed them into web apps. You'll mostly find esoteric
-programming languages. Resources:
-
-  - https://esolangs.org/wiki/Brainfuck
-  - https://esolangs.org/wiki/Brainloller
-
-
-Execute `make install build test` to build and run tests. A repl is also
-included and is used like so:
+programming languages. Languages include
+[Brainfuck](https://esolangs.org/wiki/Brainfuck) and
+[Brainloller](https://esolangs.org/wiki/Brainloller). To build and run tests,
+execute `make install build test`. A repl is also included and is used like so:
 
 ```bash
 # Usage: ./repl [mode] <file-to-load-and-run>
