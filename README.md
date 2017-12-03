@@ -9,9 +9,10 @@ programming languages. Resources:
 
 
 Execute `make install build test` to build and run tests. A repl is also
-included and is used like so: `./repl [mode] <file-to-load-and-run>`:
+included and is used like so:
 
 ```bash
-./main brainfuck
-./main brainfuck test/bf/helloworld.bf
+# Usage: ./repl [mode] <file-to-load-and-run>
+./repl brainfuck
+./repl brainfuck test/bf/helloworld.bf
 ```
