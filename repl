@@ -5,7 +5,7 @@ const read = require('fs').readFileSync
 const brainfuck = require('./dist/brainfuck').exec
 
 function usage() {
-  console.log('Usage: main [mode] <file>')
+  console.log('Usage: repl [mode] <file>')
   console.log('')
   console.log('  - modes: brainfuck')
 }
