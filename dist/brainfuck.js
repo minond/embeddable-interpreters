@@ -58,7 +58,16 @@
         };
         // Do you want to see the state after every command?
         var canDebug = function (cmd) {
-            return !!process.env.DEBUG && '-+<>[],.'.indexOf(cmd) !== -1;
+            return !!process.env.DEBUG && [
+                "-" /* MINUS */,
+                "+" /* PLUS */,
+                "<" /* LT */,
+                ">" /* GT */,
+                "[" /* OBRACKET */,
+                "]" /* CBRACKET */,
+                "," /* COMMA */,
+                "." /* PERIOD */
+            ].indexOf(cmd) !== -1;
         };
         var dump = function (cmd) {
             return console.log('[%s:%s]\t\tcmd: %s\t\tcurr: %s[%s]\t\tmem: %s', steps, idx, cmd, pointer, curr(), JSON.stringify(memory));
@@ -70,10 +79,10 @@
             var stack = 1;
             while (cmds[idx]) {
                 switch (cmds[idx]) {
-                    case '[':
+                    case "[" /* OBRACKET */:
                         stack++;
                         break;
-                    case ']':
+                    case "]" /* CBRACKET */:
                         stack--;
                         break;
                 }
@@ -131,13 +140,13 @@
         // | `,`  | accept one byte of input, storing its value in the byte at the data pointer.                                                                                                        |
         // | `[`  | if the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching `]` command. |
         // | `]`  | if the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching `[` command. |
-        var ops = {
-            '+': function () { return save((curr() === 255 ? 0 : curr() + 1)); },
-            '-': function () { return save((curr() || 256) - 1); },
-            '<': function () { return --pointer; },
-            '>': function () { return ++pointer; },
-            '.': function () { return hooks.write(String.fromCharCode(curr())); },
-            '[': function () {
+        var ops = (_a = {},
+            _a["+" /* PLUS */] = function () { return save((curr() === 255 ? 0 : curr() + 1)); },
+            _a["-" /* MINUS */] = function () { return save((curr() || 256) - 1); },
+            _a["<" /* LT */] = function () { return --pointer; },
+            _a[">" /* GT */] = function () { return ++pointer; },
+            _a["." /* PERIOD */] = function () { return hooks.write(String.fromCharCode(curr())); },
+            _a["[" /* OBRACKET */] = function () {
                 if (curr() === 0) {
                     idx = findEnd(idx + 1);
                 }
@@ -145,15 +154,15 @@
                     jumps.push(idx);
                 }
             },
-            ']': function () {
+            _a["]" /* CBRACKET */] = function () {
                 if (curr() !== 0) {
                     idx = jumps[jumps.length - 1];
                 }
                 else {
                     jumps.pop();
                 }
-            }
-        };
+            },
+            _a);
         // This is what executes every command
         var run = function () {
             cmd = cmds[idx];
@@ -163,7 +172,7 @@
                 ops[cmd]();
                 tick();
             }
-            else if (cmd === ',') {
+            else if (cmd === "," /* COMMA */) {
                 // Since read functions may not always be blocking, we handle ',' as a
                 // special operator, separately from the flow of the rest of the
                 // operators
@@ -179,5 +188,6 @@
         };
         // Run this fucker
         run();
+        var _a;
     };
 });

@@ -15,6 +15,17 @@
 // Use this in the interpreter.
 import { StringInput, read, write, isset, call, pass } from "./common";
 
+const enum OPT {
+  PLUS = '+',
+  MINUS = '-',
+  GT = '>',
+  LT = '<',
+  COMMA = ',',
+  PERIOD = '.',
+  OBRACKET = '[',
+  CBRACKET = ']',
+}
+
 type State = {
   pointer: number
   idx: number
@@ -73,7 +84,16 @@ export const exec = (prog: string, userHooks?: Hooks) => {
 
   // Do you want to see the state after every command?
   const canDebug = (cmd: string) =>
-    !!process.env.DEBUG && '-+<>[],.'.indexOf(cmd) !== -1
+    !!process.env.DEBUG && [
+      OPT.MINUS,
+      OPT.PLUS,
+      OPT.LT,
+      OPT.GT,
+      OPT.OBRACKET,
+      OPT.CBRACKET,
+      OPT.COMMA,
+      OPT.PERIOD
+    ].indexOf(cmd as OPT) !== -1
 
   const dump = (cmd: string) =>
     console.log('[%s:%s]\t\tcmd: %s\t\tcurr: %s[%s]\t\tmem: %s', steps, idx, cmd,
@@ -87,11 +107,11 @@ export const exec = (prog: string, userHooks?: Hooks) => {
 
     while (cmds[idx]) {
       switch (cmds[idx]) {
-        case '[':
+        case OPT.OBRACKET:
           stack++
           break
 
-        case ']':
+        case OPT.CBRACKET:
           stack--
           break
       }
@@ -158,13 +178,13 @@ export const exec = (prog: string, userHooks?: Hooks) => {
   // | `[`  | if the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching `]` command. |
   // | `]`  | if the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching `[` command. |
   const ops: { [index: string]: () => void } = {
-    '+': () => save((curr() === 255 ? 0 : curr() + 1)),
-    '-': () => save((curr() || 256) - 1),
-    '<': () => --pointer,
-    '>': () => ++pointer,
-    '.': () => hooks.write(String.fromCharCode(curr())),
+    [OPT.PLUS]: () => save((curr() === 255 ? 0 : curr() + 1)),
+    [OPT.MINUS]: () => save((curr() || 256) - 1),
+    [OPT.LT]: () => --pointer,
+    [OPT.GT]: () => ++pointer,
+    [OPT.PERIOD]: () => hooks.write(String.fromCharCode(curr())),
 
-    '[': () => {
+    [OPT.OBRACKET]: () => {
       if (curr() === 0) {
         idx = findEnd(idx + 1)
       } else {
@@ -172,7 +192,7 @@ export const exec = (prog: string, userHooks?: Hooks) => {
       }
     },
 
-    ']': () => {
+    [OPT.CBRACKET]: () => {
       if (curr() !== 0) {
         idx = jumps[jumps.length - 1]
       } else {
@@ -190,7 +210,7 @@ export const exec = (prog: string, userHooks?: Hooks) => {
       // Standard operators update the state themselvels
       ops[cmd]()
       tick()
-    } else if (cmd === ',') {
+    } else if (cmd === OPT.COMMA) {
       // Since read functions may not always be blocking, we handle ',' as a
       // special operator, separately from the flow of the rest of the
       // operators
