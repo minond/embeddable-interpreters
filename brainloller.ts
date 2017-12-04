@@ -73,7 +73,7 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
   var coor: [number, number] = [0, 0]
   var direction = DIR.RIGHT
 
-  var jumps: [number, number][] = []
+  var jumps: [[number, number], DIR][] = []
   var memory: number[] = []
   var pointer = 0
 
@@ -172,13 +172,13 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
       if (curr() === 0) {
         coor = findEnd(coor)
       } else {
-        jumps.push(coor)
+        jumps.push([coor, direction])
       }
     },
 
     [OPT.CBRACKET]: () => {
       if (curr() !== 0) {
-        coor = jumps[jumps.length - 1]
+        [coor, direction] = jumps[jumps.length - 1]
       } else {
         jumps.pop()
       }
@@ -259,19 +259,24 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
 //   [ { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 255 } ],
 // ])
 
-exec([
-  [pixel(OPT.PLUS),     pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-])
+// exec([
+//   [pixel(OPT.PLUS),     pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+// ])
+
+// exec([
+//   [pixel(OPT.PLUS), pixel(OPT.OBRACKET), pixel(OPT.PLUS), pixel(OPT.NOOP), pixel(OPT.ROTPOS90)],
+//   [pixel(OPT.PLUS), pixel(OPT.CBRACKET), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+// ])
