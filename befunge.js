@@ -37,6 +37,9 @@ const parse = (rawprog) =>
   rawprog.split('\n').map((line) =>
     line.split(''))
 
+const integer = (i) =>
+  parseInt(i)
+
 const ascii = (c) =>
   c.charCodeAt(0)
 
@@ -255,23 +258,45 @@ var coors = [0, 0]
 var cmd
 var steps = 0
 
-for (; (cmd = getAt(coors, program)) !== NOOP; coors = step(coors, direction), ++steps) {
+;(function tick() {
+  var cmd = getAt(coors, program)
+
+  var next = () => {
+    debug(['stack:  %O\n', stack])
+    coors = step(coors, direction)
+    steps++
+    tick()
+  }
+
+  if (cmd === NOOP) {
+    return
+  }
+
   debug(['<= %s:  "%s"  ', steps.toString().padStart(5, '0'), cmd])
 
   if (stringmode && cmd !== '"') {
     stack.push(ascii(cmd))
+    next()
   } else if (cmd === '@') {
     // @   End program
-    break
+    return
   } else if (cmd === '~') {
     // ~   Get character from user and push it
+    read((c) => {
+      stack.push(ascii(c))
+      next()
+    })
   } else if (cmd === '&') {
     // &   Get integer from user and push it
+    read((i) => {
+      stack.push(integer(i))
+      next()
+    })
   } else if (cmd in cmds) {
     cmds[cmd]()
+    next()
   } else {
-    console.log('XXX')
+    debug(['\n\nWarning: invalid command: "%s"\n\n', cmd])
+    next()
   }
-
-  debug(['stack:  %O\n', stack])
-}
+})()
