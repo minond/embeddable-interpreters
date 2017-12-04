@@ -52,7 +52,7 @@ const pop = (stack) =>
   stack.pop() || 0
 
 const getAt = ([x, y], prog) =>
-  prog.length > y && prog[y].length > x
+  x >= 0 && y >= 0 && !!prog[y] && prog[y].length > x
     ? prog[y][x]
     : NOOP
 
@@ -61,13 +61,27 @@ const setAt = ([x, y], prog, val) =>
     ? prog[y][x] = val
     : NOOP
 
-const step = ([x, y], dir) => {
+const step = ([x, y], dir, program) => {
+  var next;
+
   switch (dir) {
-  case DIR.RIGHT: return [x + 1, y]
-  case DIR.DOWN:  return [x, y + 1]
-  case DIR.LEFT:  return [x - 1, y]
-  case DIR.UP:    return [x, y - 1]
+  case DIR.RIGHT: next = [x + 1, y]; break
+  case DIR.DOWN:  next = [x, y + 1]; break
+  case DIR.LEFT:  next = [x - 1, y]; break
+  case DIR.UP:    next = [x, y - 1]; break
   }
+
+  if (getAt(next, program) === NOOP) {
+    // Wrap around
+    switch (dir) {
+    case DIR.RIGHT: next = [0, y]; break
+    case DIR.DOWN:  next = [x, 0]; break
+    case DIR.LEFT:  next = [program[y].length - 1, y]; break
+    case DIR.UP:    next = [x, program.length - 1]; break
+    }
+  }
+
+  return next
 }
 
 const exec = (rawprog, userHooks) => {
@@ -196,7 +210,7 @@ const exec = (rawprog, userHooks) => {
     // #   Bridge: jump over next command in the current direction of the
     // current PC
     '#': () =>
-      coors = step(coors, direction),
+      coors = step(coors, direction, program),
 
     // g   A "get" call (a way to retrieve data in storage). Pop two values y
     // and x, then push the ASCII value of the character at that position in
@@ -267,7 +281,7 @@ const exec = (rawprog, userHooks) => {
     var next = () => {
       debug(['Stack:  %O\n', stack])
       debug(['\nProgram:\n%s\n\n', unparse(program)])
-      coors = step(coors, direction)
+      coors = step(coors, direction, program)
       steps++
       process.nextTick(tick)
     }
@@ -307,7 +321,8 @@ const exec = (rawprog, userHooks) => {
 }
 
 const helloworld = `64+"!dlroW ,olleH">:#,_@`
-const infiniteloop = `>v\n^<`
+const infiniteloop1 = `>v\n^<`
+const infiniteloop2 = '<'
 const factorial = `&>:1-:v v *_$.@
  ^    _$>\:^`
 const cat = `~:1+!#@_,`
