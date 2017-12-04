@@ -31,6 +31,11 @@ const enum DIR {
   RIGHT,
 }
 
+type Coordinate = [
+  number,
+  number
+]
+
 type Pixel = {
   r: number
   g: number
@@ -39,7 +44,7 @@ type Pixel = {
 
 type State = {
   direction: DIR
-  coor: [number, number]
+  coor: Coordinate
   memory: number[]
   pointer: number
 }
@@ -70,10 +75,10 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
   var steps = 0
   var cmd: OPT
 
-  var coor: [number, number] = [0, 0]
+  var coor: Coordinate = [0, 0]
   var direction = DIR.RIGHT
 
-  var jumps: [[number, number], DIR][] = []
+  var jumps: [Coordinate, DIR][] = []
   var memory: number[] = []
   var pointer = 0
 
@@ -83,27 +88,88 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
   const save = (val: number) =>
     memory[pointer] = val
 
-  const moveRight = () =>
-    coor = [coor[0] + 1, coor[1]]
-
-  const moveDown = () =>
-    coor = [coor[0], coor[1] + 1]
-
-  const moveLeft = () =>
-    coor = [coor[0] - 1, coor[1]]
-
-  const moveUp = () =>
-    coor = [coor[0], coor[1] - 1]
-
   const dump = (cmd: string) =>
     console.log('[%s:%s]\t\tcmd: %s\t\tcurr: %s[%s]\t\tmem: %s', steps, coor, cmd,
       pointer, curr(), JSON.stringify(memory))
 
-  const findEnd = (coor: [number, number]) => {
-    // XXX find the matching CBRACKET while following ROTPOS90 and ROTNEG90
-    // updates but ignoring everything else.
-    return coor
+  // Find the matching CBRACKET while following ROTPOS90 and ROTNEG90 updates
+  // but ignoring everything else.
+  const findEnd = (coor: Coordinate): [Coordinate, DIR] => {
+    var peekDir = direction
+    var peekCoor = nextCoor(coor, direction)
+    var peekJump = 1
+
+    while (prog[peekCoor[1]] && prog[peekCoor[1]][peekCoor[0]]) {
+      switch (optcode(prog[peekCoor[1]][peekCoor[0]])) {
+      case OPT.OBRACKET:
+        peekJump++
+        break
+
+      case OPT.CBRACKET:
+        peekJump--
+
+        if (peekJump === 0) {
+          return [peekCoor as Coordinate, peekDir]
+        }
+
+        break
+
+      case OPT.ROTPOS90:
+        peekDir = nextRotation(peekDir)
+        break
+
+      case OPT.ROTNEG90:
+        peekDir = prevRotation(peekDir)
+        break
+      }
+
+      peekCoor = nextCoor(peekCoor, peekDir)
+    }
+
+    throw new Error('Found OBRACKET but no CBRACKET')
   }
+
+  const nextRotation = (dir: DIR) => {
+    switch (dir) {
+    case DIR.RIGHT: return DIR.DOWN
+    case DIR.DOWN:  return DIR.LEFT
+    case DIR.LEFT:  return DIR.UP
+    case DIR.UP:    return DIR.RIGHT
+    default:        throw new Error(`Invalid direction: ${dir}`)
+    }
+  }
+
+  const prevRotation = (dir: DIR) => {
+    switch (dir) {
+    case DIR.RIGHT: return DIR.UP
+    case DIR.UP:    return DIR.LEFT
+    case DIR.LEFT:  return DIR.DOWN
+    case DIR.DOWN:  return DIR.RIGHT
+    default:        throw new Error(`Invalid direction: ${dir}`)
+    }
+  }
+
+  const nextCoor = (coor: Coordinate, dir: DIR): Coordinate => {
+    switch (dir) {
+    case DIR.RIGHT: return moveRight(coor)
+    case DIR.DOWN:  return moveDown(coor)
+    case DIR.LEFT:  return moveLeft(coor)
+    case DIR.UP:    return moveUp(coor)
+    default:        throw new Error(`Invalid direction: ${direction}`)
+    }
+  }
+
+  const moveRight = (coor: Coordinate): Coordinate =>
+    [coor[0] + 1, coor[1]]
+
+  const moveDown = (coor: Coordinate): Coordinate =>
+    [coor[0], coor[1] + 1]
+
+  const moveLeft = (coor: Coordinate): Coordinate =>
+    [coor[0] - 1, coor[1]]
+
+  const moveUp = (coor: Coordinate): Coordinate =>
+    [coor[0], coor[1] - 1]
 
   const internalUpdate = (state: State) => {
     direction = isset(state.direction) ? state.direction : direction
@@ -121,27 +187,7 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
     }
 
     steps++
-
-    switch (direction) {
-    case DIR.RIGHT:
-      moveRight()
-      break
-
-    case DIR.DOWN:
-      moveDown()
-      break
-
-    case DIR.LEFT:
-      moveLeft()
-      break
-
-    case DIR.UP:
-      moveUp()
-      break
-
-    default:
-      throw new Error(`Invalid direction: ${direction}`)
-    }
+    coor = nextCoor(coor, direction)
 
     if (!prog[coor[1]] || !prog[coor[1]][coor[0]]) {
       hooks.done()
@@ -170,7 +216,7 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
 
     [OPT.OBRACKET]: () => {
       if (curr() === 0) {
-        coor = findEnd(coor)
+        [coor, direction] = findEnd(coor)
       } else {
         jumps.push([coor, direction])
       }
@@ -185,43 +231,11 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
     },
 
     [OPT.ROTPOS90]: () => {
-      switch (direction) {
-      case DIR.RIGHT:
-        direction = DIR.DOWN
-        break
-
-      case DIR.DOWN:
-        direction = DIR.LEFT
-        break
-
-      case DIR.LEFT:
-        direction = DIR.UP
-        break
-
-      case DIR.UP:
-        direction = DIR.RIGHT
-        break
-      }
+      direction = nextRotation(direction)
     },
 
     [OPT.ROTNEG90]: () => {
-      switch (direction) {
-      case DIR.RIGHT:
-        direction = DIR.UP
-        break
-
-      case DIR.UP:
-        direction = DIR.LEFT
-        break
-
-      case DIR.LEFT:
-        direction = DIR.DOWN
-        break
-
-      case DIR.DOWN:
-        direction = DIR.RIGHT
-        break
-      }
+      direction = prevRotation(direction)
     },
   }
 
