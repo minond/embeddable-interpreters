@@ -188,22 +188,18 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
       switch (direction) {
       case DIR.RIGHT:
         direction = DIR.DOWN
-        moveDown()
         break
 
       case DIR.DOWN:
         direction = DIR.LEFT
-        moveLeft()
         break
 
       case DIR.LEFT:
         direction = DIR.UP
-        moveUp()
         break
 
       case DIR.UP:
         direction = DIR.RIGHT
-        moveRight()
         break
       }
     },
@@ -212,22 +208,18 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
       switch (direction) {
       case DIR.RIGHT:
         direction = DIR.UP
-        moveUp()
         break
 
       case DIR.UP:
         direction = DIR.LEFT
-        moveLeft()
         break
 
       case DIR.LEFT:
         direction = DIR.DOWN
-        moveDown()
         break
 
       case DIR.DOWN:
         direction = DIR.RIGHT
-        moveRight()
         break
       }
     },
@@ -268,5 +260,18 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
 // ])
 
 exec([
-  [pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS)],
+  [pixel(OPT.PLUS),     pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
+  [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
 ])
