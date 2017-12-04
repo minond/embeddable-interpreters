@@ -1,5 +1,5 @@
 // https://esolangs.org/wiki/Befunge
-// https://github.com/catseye/Funge-98/blob/master/doc/funge98.markdown#Machine
+// https://github.com/catseye/Befunge-93/blob/master/doc/Befunge-93.markdown
 const DEBUG = !!process.env.DEBUG
 const NOOP = {}
 
@@ -349,5 +349,24 @@ const lessormore =
   >*:.>0"!rebmun tupnI">:#,_$25*,:&:99p\`|^<       _0"!niw uoY">:#,_$25*,@
       ^         <                       >:99g01-*+^`
 
+const rockpaperscissors = `v                       >  v
+>a"3 no"4k,1.0"1 peels"#^=$>2.0"1 peels"#v=$v
+          v                              <  <
+v,k3"rock"?"srossics"7k,v
+          "
+          r
+          e
+          p
+          a
+          p
+          "
+          4
+          k
+          ,                                             @
+          v             <                          >'y-#^_a,0by-8-0ay-x
+>         >0"2 peels"#v=$>a," ?niaga yalp"ack,>~:a-|
+                      >  ^                    ^ $  <
+Rock Scissors Paper, on 3`
+
 const simpleupdate = '300p00'
-exec(helloworld)
+exec('1 2 + 5 *')
