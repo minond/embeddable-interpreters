@@ -193,37 +193,3 @@
     };
     exports.exec = exec;
 });
-// exec([
-//   [ { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 0, b: 255 }, { r: 128, g: 0, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 128, g: 0, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 128, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 128, b: 128 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 255 } ],
-//   [ { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 255, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 255 } ],
-// ])
-// exec([
-//   [pixel(OPT.PLUS),     pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.ROTNEG90), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-// ])
-// exec([
-//   [pixel(OPT.PLUS), pixel(OPT.OBRACKET), pixel(OPT.PLUS), pixel(OPT.NOOP), pixel(OPT.ROTPOS90)],
-//   [pixel(OPT.PLUS), pixel(OPT.CBRACKET), pixel(OPT.PLUS), pixel(OPT.PLUS), pixel(OPT.ROTPOS90)],
-// ])
