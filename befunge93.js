@@ -310,11 +310,14 @@ const exec = (rawprog, userHooks) => {
         stack.push(integer(i))
         next()
       })
+    } else if (cmd === ' ') {
+      //     Noop
+      next()
     } else if (cmd in cmds) {
       cmds[cmd]()
       next()
     } else {
-      // debug(['\n\nWarning: invalid command: "%s"\n\n', cmd])
+      debug(['\n\nWarning: invalid command: "%s"\n\n', cmd])
       next()
     }
   })()
@@ -384,4 +387,4 @@ v,k3"rock"?"srossics"7k,v
 Rock Scissors Paper, on 3`
 
 const simpleupdate = '300p00'
-exec('1 2 + 5 *')
+exec('1 2 + 5 * @')
