@@ -7,4 +7,8 @@ install:
 	npm install
 
 test: build
-	node test/*_test.ts
+	@echo "Running brainfuck tests:"
+	@node test/brainfuck_test.ts
+	@echo
+	@echo "Running brainloller tests:"
+	@node test/brainloller_test.ts

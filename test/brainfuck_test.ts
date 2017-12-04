@@ -15,7 +15,7 @@ const testsOutput = (label, prog, expectedOutput) => {
 
     done () {
       assert(buff.join('') === expectedOutput)
-      console.log('%s: ok', label)
+      console.log('  - %s: ok', label)
     }
   })
 }
