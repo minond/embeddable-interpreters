@@ -8,7 +8,6 @@
 import { StringInput, read, write, isset, call, pass } from "./common";
 
 export { exec, DIR }
-process.env.DEBUG='1' // XXX
 
 const enum OPT {
   PLUS = '[0,255,0]',
