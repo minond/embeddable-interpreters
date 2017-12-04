@@ -1,14 +1,36 @@
 // https://esolangs.org/wiki/Befunge
 // https://github.com/catseye/Funge-98/blob/master/doc/funge98.markdown#Machine
-const { random, floor } = Math
-
+const DEBUG = true
 const NOOP = {}
+
+const { random, floor } = Math
 
 const DIR = {
   RIGHT: 0,
   DOWN: 1,
   LEFT: 2,
   UP: 3,
+}
+
+const debug = (args) =>
+  DEBUG &&
+    process.stdout.write(require('util').format.apply(null, args))
+
+const write = (str) =>
+  process.stdout.write((DEBUG ? '\n=> ' : '') + str + (DEBUG ? '\n                ' : ''))
+
+const read = (cb) => {
+  const readline = require('readline')
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  })
+
+  rl.question(inputPrompt, (input) => {
+    rl.close()
+    cb(input)
+  })
 }
 
 const parse = (rawprog) =>
@@ -18,37 +40,49 @@ const parse = (rawprog) =>
 const ascii = (c) =>
   c.charCodeAt(0)
 
-const getAt = (x, y, prog) =>
+const pop = () =>
+  stack.pop() || 0
+
+const getAt = ([x, y], prog) =>
   prog.length > y && prog[y].length > x
     ? prog[y][x]
     : NOOP
 
-const setAt = (x, y, prog, val) =>
-  getAt(x, y, prog) !== NOOP
+const setAt = ([x, y], prog, val) =>
+  getAt([x, y], prog) !== NOOP
     ? prog[y][x] = val
     : NOOP
+
+const step = ([x, y], dir) => {
+  switch (dir) {
+  case DIR.RIGHT: return [x + 1, y]
+  case DIR.DOWN:  return [x, y + 1]
+  case DIR.LEFT:  return [x - 1, y]
+  case DIR.UP:    return [x, y - 1]
+  }
+}
 
 const cmds = {
   // +   Addition: Pop two values a and b, then push the result of a+b
   '+': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(a + b)
   },
 
   // -   Subtraction: Pop two values a and b, then push the result of b-a
   '-': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(a - b)
   },
 
   // *   Multiplication: Pop two values a and b, then push the result of a*b
   '*': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(a * b)
   },
@@ -57,8 +91,8 @@ const cmds = {
   // rounded down. According to the specifications, if a is zero, ask the user
   // what result they want.
   '/': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(floor(a / b))
   },
@@ -66,8 +100,8 @@ const cmds = {
   // %   Modulo: Pop two values a and b, then push the remainder of the integer
   // division of b/a.
   '%': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(a % b)
   },
@@ -75,13 +109,13 @@ const cmds = {
   // !   Logical NOT: Pop a value. If the value is zero, push 1; otherwise,
   // push zero.
   '!': () =>
-    stack.push(stack.pop() === 0 ? 1 : 0),
+    stack.push(pop() === 0 ? 1 : 0),
 
   // `   Greater than: Pop two values a and b, then push 1 if b>a, otherwise
   // zero.
   '`': () => {
-    var a = stack.pop(),
-      b = stack.pop()
+    var a = pop(),
+      b = pop()
 
     stack.push(b > a ? 1 : 0)
   },
@@ -109,57 +143,59 @@ const cmds = {
   // _   Horizontal IF: pop a value; set direction to right if value=0, set to
   // left otherwise
   '_': () =>
-    direction = stack.pop() === 0 ? DIR.RIGHT : DIR.LEFT,
+    direction = pop() === 0 ? DIR.RIGHT : DIR.LEFT,
 
   // |   Vertical IF: pop a value; set direction to down if value=0, set to up
   // otherwise
   '|': () =>
-    direction = stack.pop() === 0 ? DIR.DOWN : DIR.UP,
+    direction = pop() === 0 ? DIR.DOWN : DIR.UP,
 
   // "   Toggle stringmode (push each character's ASCII value all the way up to
   // the next ")
-  // XXX
+  '"': () =>
+    stringmode = !stringmode,
 
   // :   Duplicate top stack value
   ':': () => {
-    var a = stack.pop()
+    var a = pop()
 
     stack.push(a)
     stack.push(a)
   },
 
   // \   Swap top stack values
-  ':': () => {
-    var a = stack.pop()
-      b = stack.pop()
+  '\\': () => {
+    var a = pop()
+      b = pop()
 
-    stack.push(b)
     stack.push(a)
+    stack.push(b)
   },
 
   // $   Pop (remove) top stack value and discard
   '$': () =>
-    stack.pop(),
+    pop(),
 
   // .   Pop top of stack and output as integer
   '.': () =>
-    console.log(stack.pop()),
+    console.log(pop()),
 
   // ,   Pop top of stack and output as ASCII character
   ',': () =>
-    console.log(String.fromCharCode(stack.pop())),
+    write(String.fromCharCode(pop())),
 
   // #   Bridge: jump over next command in the current direction of the current
   // PC
-  // XXX
+  '#': () =>
+    coors = step(coors, direction),
 
   // g   A "get" call (a way to retrieve data in storage). Pop two values y and
   // x, then push the ASCII value of the character at that position in the
   // program. If (x,y) is out of bounds, push 0
   'g': () => {
-    var y = stack.pop(),
-      x = stack.pop(),
-      c = getAt(x, y, program)
+    var y = pop(),
+      x = pop(),
+      c = getAt([x, y], program)
 
     stack.push(c === NOOP ? 0 : ascii(c))
   },
@@ -175,19 +211,12 @@ const cmds = {
     setAt(x, y, program, ascii(v))
   },
 
-  // &   Get integer from user and push it
-  // XXX
-
-  // ~   Get character from user and push it
-  // XXX
-
-  // @   End program
-  // XXX
-
   // 0 – 9   Push corresponding number onto the stack
   '0': () =>
     stack.push(0),
-  '1': () => stack.push(1),
+
+  '1': () =>
+    stack.push(1),
 
   '2': () =>
     stack.push(2),
@@ -217,23 +246,32 @@ const cmds = {
 const helloworld1 = `64+"!dlroW ,olleH">:#,_@`
 const helloworld2 = `<>>#;>:#,_@;"Hello, world!"`
 
+var stringmode = false
 var program = parse(helloworld1)
 var stack = []
-var pointer = 0
 var direction = DIR.RIGHT
 
+var coors = [0, 0]
+var cmd
+var steps = 0
 
+for (; (cmd = getAt(coors, program)) !== NOOP; coors = step(coors, direction), ++steps) {
+  debug(['<= %s:  "%s"  ', steps.toString().padStart(5, '0'), cmd])
 
+  if (stringmode && cmd !== '"') {
+    stack.push(ascii(cmd))
+  } else if (cmd === '@') {
+    // @   End program
+    break
+  } else if (cmd === '~') {
+    // ~   Get character from user and push it
+  } else if (cmd === '&') {
+    // &   Get integer from user and push it
+  } else if (cmd in cmds) {
+    cmds[cmd]()
+  } else {
+    console.log('XXX')
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
+  debug(['stack:  %O\n', stack])
+}
