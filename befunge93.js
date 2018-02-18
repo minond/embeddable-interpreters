@@ -322,3 +322,8 @@ const exec = (rawprog, userHooks) => {
     }
   })()
 }
+
+
+if (process.argv.length > 2) {
+  exec(require('fs').readFileSync(process.argv[2]).toString())
+}
