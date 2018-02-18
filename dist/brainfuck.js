@@ -23,7 +23,7 @@
     // Use this in the interpreter.
     var common_1 = require("./common");
     // ## The interpreter
-    var exec = function (prog, userHooks) {
+    var exec = function (prog, userHooks, buff) {
         // First, split the program into an array of characters so we can take action
         // upon each of them one by one. That is stores in `cmds`. Then store the
         // number of "commands" so that we know when to stop and not have to check
@@ -128,7 +128,10 @@
                 memory: memory.slice(0)
             });
         };
-        var hooks = Object.assign({ read: common_1.read, write: common_1.write, tick: common_1.call, done: common_1.pass }, userHooks);
+        var readBuff = function (cb) {
+            return common_1.read(cb, buff || new common_1.ReadBuffer());
+        };
+        var hooks = Object.assign({ read: readBuff, write: common_1.write, tick: common_1.call, done: common_1.pass }, userHooks);
         // ### Operators
         // | tok  | description                                                                                                                                                                         |
         // |:----:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

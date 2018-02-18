@@ -13,7 +13,7 @@
 // browsers; a read function for node; a read function for browsers; a generic
 // read function. Use this in the interpreter; and a generic write function.
 // Use this in the interpreter.
-import { StringInput, read, write, isset, call, pass } from "./common";
+import { ReadBuffer, StringInput, read, write, isset, call, pass } from "./common";
 
 export { exec }
 
@@ -47,7 +47,7 @@ type Hooks = {
 }
 
 // ## The interpreter
-const exec = (prog: string, userHooks?: Hooks) => {
+const exec = (prog: string, userHooks?: Hooks, buff?: ReadBuffer) => {
   // First, split the program into an array of characters so we can take action
   // upon each of them one by one. That is stores in `cmds`. Then store the
   // number of "commands" so that we know when to stop and not have to check
@@ -165,7 +165,10 @@ const exec = (prog: string, userHooks?: Hooks) => {
       steps,
       memory: memory.slice(0) })
 
-  const hooks: Hooks = Object.assign({ read, write, tick: call, done: pass },
+  const readBuff = (cb: StringInput) =>
+    read(cb, buff || new ReadBuffer())
+
+  const hooks: Hooks = Object.assign({ read: readBuff, write, tick: call, done: pass },
     userHooks)
 
   // ### Operators

@@ -3,8 +3,27 @@ export type StringInput = (str: string) => void
 const inBrowser = typeof window !== 'undefined'
 const inputPrompt = 'input: '
 
-export const read = (cb: StringInput) =>
-  inBrowser ? browserRead(cb) : nodeRead(cb)
+export class ReadBuffer {
+  protected pos: number
+  protected buff: string
+
+  constructor(buff: string = "") {
+    this.buff = buff
+    this.pos = 0
+  }
+
+  ready() {
+    return this.buff.length !== 0
+  }
+
+  next() {
+    return this.buff.charAt(this.pos++) || String.fromCharCode(0)
+  }
+}
+
+export const read = (cb: StringInput, buff: ReadBuffer) =>
+  buff.ready() ? cb(buff.next()) :
+    (inBrowser ? browserRead(cb) : nodeRead(cb))
 
 export const write = (str: string) =>
   inBrowser ? browserWrite(str) : nodeWrite(str)

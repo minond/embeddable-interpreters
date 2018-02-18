@@ -11,8 +11,24 @@
     exports.__esModule = true;
     var inBrowser = typeof window !== 'undefined';
     var inputPrompt = 'input: ';
-    exports.read = function (cb) {
-        return inBrowser ? browserRead(cb) : nodeRead(cb);
+    var ReadBuffer = /** @class */ (function () {
+        function ReadBuffer(buff) {
+            if (buff === void 0) { buff = ""; }
+            this.buff = buff;
+            this.pos = 0;
+        }
+        ReadBuffer.prototype.ready = function () {
+            return this.buff.length !== 0;
+        };
+        ReadBuffer.prototype.next = function () {
+            return this.buff.charAt(this.pos++) || String.fromCharCode(0);
+        };
+        return ReadBuffer;
+    }());
+    exports.ReadBuffer = ReadBuffer;
+    exports.read = function (cb, buff) {
+        return buff.ready() ? cb(buff.next()) :
+            (inBrowser ? browserRead(cb) : nodeRead(cb));
     };
     exports.write = function (str) {
         return inBrowser ? browserWrite(str) : nodeWrite(str);

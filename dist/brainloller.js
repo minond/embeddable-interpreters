@@ -25,7 +25,7 @@
             ? "[0,0,0]" /* NOOP */
             : JSON.stringify([cell.r, cell.g, cell.b]);
     };
-    var exec = function (prog, userHooks) {
+    var exec = function (prog, userHooks, buff) {
         var steps = 0;
         var cmd;
         var coor = [0, 0];
@@ -140,7 +140,10 @@
                 memory: memory.slice(0)
             });
         };
-        var hooks = Object.assign({ read: common_1.read, write: common_1.write, tick: common_1.call, done: common_1.pass }, userHooks);
+        var readBuff = function (cb) {
+            return common_1.read(cb, buff || new common_1.ReadBuffer());
+        };
+        var hooks = Object.assign({ read: readBuff, write: common_1.write, tick: common_1.call, done: common_1.pass }, userHooks);
         var ops = (_a = {},
             _a["[0,255,0]" /* PLUS */] = function () { return save((curr() === 255 ? 0 : curr() + 1)); },
             _a["[0,128,0]" /* MINUS */] = function () { return save((curr() || 256) - 1); },

@@ -5,7 +5,7 @@
 // evaluated.
 
 // - https://esolangs.org/wiki/Brainloller
-import { StringInput, read, write, isset, call, pass } from "./common";
+import { ReadBuffer, StringInput, read, write, isset, call, pass } from "./common";
 
 export { exec, DIR }
 
@@ -70,7 +70,7 @@ const optcode = (cell: Pixel): OPT =>
     ? OPT.NOOP
     : JSON.stringify([cell.r, cell.g, cell.b]) as OPT
 
-const exec = (prog: Pixel[][], userHooks?: Hooks) => {
+const exec = (prog: Pixel[][], userHooks?: Hooks, buff?: ReadBuffer) => {
   var steps = 0
   var cmd: OPT
 
@@ -203,7 +203,10 @@ const exec = (prog: Pixel[][], userHooks?: Hooks) => {
       pointer,
       memory: memory.slice(0) })
 
-  const hooks: Hooks = Object.assign({ read, write, tick: call, done: pass },
+  const readBuff = (cb: StringInput) =>
+    read(cb, buff || new ReadBuffer())
+
+  const hooks: Hooks = Object.assign({ read: readBuff, write, tick: call, done: pass },
     userHooks)
 
   const ops: { [index: string]: () => void } = {
