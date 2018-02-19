@@ -1,0 +1,22 @@
+#!/bin/bash
+
+info() {
+  echo "$@" 1>&2;
+}
+
+png=$1
+info " - Uploading PNG file: $png"
+
+res=$(curl --silent -X POST -F file=@$png https://tmpstore.herokuapp.com/upload)
+tmp=$(node -e "console.log($res.name)")
+info " - Got back temp id: $tmp"
+
+url="https://tmpstore.herokuapp.com/get/$tmp"
+service="https://8rwnim1cq1.execute-api.us-west-2.amazonaws.com/prod/pixels_pixels"
+
+info " - Making processing request..."
+code=$(curl --silent "https://paddedjson.herokuapp.com/?url=$service&method=POST&body=%7B%22path%22:%22$url%22%7D")
+
+info " - Done."
+info
+echo $(node -e "var callback=(x)=>console.log(JSON.stringify(x,null,'  ')); $code")
