@@ -10,7 +10,7 @@
     "files": [
       "type/index.d.ts",
       "type/inspector.d.ts",
-      "brainfuck.ts",
-      "brainloller.ts"
+      "src/brainfuck.ts",
+      "src/brainloller.ts"
     ]
 }
