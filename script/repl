@@ -2,7 +2,7 @@
 
 const repl = require('repl')
 const read = require('fs').readFileSync
-const brainfuck = require('./dist/brainfuck').exec
+const brainfuck = require('../dist/brainfuck').exec
 
 function usage() {
   console.log('Usage: repl [mode] <file>')

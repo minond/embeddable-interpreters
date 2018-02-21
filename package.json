@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/minond/embeddable-interpreters/issues"
   },
+  "bin": {
+    "ei-repl": "./script/repl"
+  },
   "homepage": "https://github.com/minond/embeddable-interpreters#readme",
   "dependencies": {
     "typescript": "^2.7.0-dev.20171201"
