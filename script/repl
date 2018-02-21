@@ -3,15 +3,29 @@
 const repl = require('repl')
 const read = require('fs').readFileSync
 const brainfuck = require('../dist/brainfuck').exec
+const brainloller = require('../dist/brainloller').exec
 
 function usage() {
   console.log('Usage: repl [mode] <file>')
   console.log('')
   console.log('  - modes: brainfuck')
+  console.log('  - modes: brainloller')
 }
 
-function runExec(interpreter, file) {
-  interpreter(read(file).toString())
+function runExec(interpreter, file, processorFn) {
+  var buff = []
+
+  interpreter(processorFn(read(file).toString()), {
+    write(str) {
+      buff.push(str)
+    },
+
+    done() {
+      if (buff.length) {
+        console.log(buff.join(''))
+      }
+    }
+  })
 }
 
 function runRepl(interpreter) {
@@ -33,9 +47,9 @@ function runRepl(interpreter) {
   });
 }
 
-function handle(interpreter) {
+function handle(interpreter, processorFn) {
   if (process.argv[3]) {
-    runExec(interpreter, process.argv[3])
+    runExec(interpreter, process.argv[3], processorFn)
   } else {
     runRepl(interpreter)
   }
@@ -43,7 +57,11 @@ function handle(interpreter) {
 
 switch (process.argv[2]) {
 case 'brainfuck':
-  handle(brainfuck)
+  handle(brainfuck, (x) => x)
+  break
+
+case 'brainloller':
+  handle(brainloller, (x) => JSON.parse(x))
   break
 
 case '-h':
